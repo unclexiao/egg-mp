@@ -6,5 +6,6 @@
  * @property {String} SOME_KEY - some description
  */
 exports.mp = {
-
+  appId: '',
+  appSecret: '',
 };

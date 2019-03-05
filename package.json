@@ -1,6 +1,6 @@
 {
   "name": "egg-mp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "egg plugin for wechat mini program",
   "eggPlugin": {
     "name": "mp"
@@ -8,7 +8,11 @@
   "keywords": [
     "egg",
     "eggPlugin",
-    "egg-plugin"
+    "egg-plugin",
+    "wechat",
+    "wxapp",
+    "mini-program",
+    "miniProgram"
   ],
   "dependencies": {},
   "devDependencies": {
@@ -44,12 +48,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-mp.git"
+    "url": "git+https://github.com/unclexiao/egg-mp.git"
   },
   "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
+    "url": "https://github.com/unclexiao/egg-mp/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-mp#readme",
-  "author": "unclexiao",
+  "homepage": "https://github.com/unclexiao/egg-mp#readme",
+  "author": "unclexiao <449129722@qq.com>",
   "license": "MIT"
 }
