@@ -1,36 +1,26 @@
 # egg-mp
 
-[![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
-[![Test coverage][codecov-image]][codecov-url]
-[![David deps][david-image]][david-url]
-[![Known Vulnerabilities][snyk-image]][snyk-url]
-[![npm download][download-image]][download-url]
+## 介绍
+微信小程序（Wechat Mini-Program）常规的后端服务，献给了不起的[EggJS](https://eggjs.org/zh-cn/)
 
-[npm-image]: https://img.shields.io/npm/v/egg-mp.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-mp
-[travis-image]: https://img.shields.io/travis/eggjs/egg-mp.svg?style=flat-square
-[travis-url]: https://travis-ci.org/eggjs/egg-mp
-[codecov-image]: https://img.shields.io/codecov/c/github/eggjs/egg-mp.svg?style=flat-square
-[codecov-url]: https://codecov.io/github/eggjs/egg-mp?branch=master
-[david-image]: https://img.shields.io/david/eggjs/egg-mp.svg?style=flat-square
-[david-url]: https://david-dm.org/eggjs/egg-mp
-[snyk-image]: https://snyk.io/test/npm/egg-mp/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-mp
-[download-image]: https://img.shields.io/npm/dm/egg-mp.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-mp
+## 特性
+- [X] 小程序登录
+- [ ] 小程序授权
+- [ ] 小程序支付
+- [ ] 推送模板消息
+- [ ] 接入微信开放平台
+- [ ] 检测是否含有敏感词
+- [ ] 生成二维码/小程序码
+- [ ] 接入在线客服消息
 
-<!--
-Description here.
--->
 
-## Install
+## 安装
 
 ```bash
 $ npm i egg-mp --save
 ```
 
-## Usage
+## 启用插件
 
 ```js
 // {app_root}/config/plugin.js
@@ -40,24 +30,38 @@ exports.mp = {
 };
 ```
 
-## Configuration
+## 应用配置
 
 ```js
 // {app_root}/config/config.default.js
 exports.mp = {
+  appId: 'your appid', 
+  appSecret: 'your appscret'
 };
 ```
 
-see [config/config.default.js](config/config.default.js) for more detail.
+请查看官网的 [config/config.default.js](config/config.default.js) 获取更详细说明.
 
-## Example
+## 简单实例
 
-<!-- example here -->
+```javascript
+async login() {
+    const { ctx, service } = this;
+    const query = ctx.request.query;
+    const rule = { code: { type: "string" } };
+    ctx.validate(rule, query); // code params is required
+    let res = await service.wechat.login(query.code);
+    // {
+    //   session_key: "Sop9yRVgqnCFjsqANnNE2Q==",
+    //   openid: "oo17M4gnwK3iQd6dxcA5mLDkoHA8"
+    // };
+}
+```
 
-## Questions & Suggestions
+## 问题与建议
 
-Please open an issue [here](https://github.com/eggjs/egg/issues).
+请在[这里](https://github.com/unclexiao/egg-mp/issues)向我提出问题
 
-## License
+## 开源协议
 
 [MIT](LICENSE)

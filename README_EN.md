@@ -23,53 +23,64 @@
 <!--
 Description here.
 -->
+## Introductions
+basic backend service for mp(wechat mini program)
 
-## 依赖说明
+## Features
+- [X] wechat login
+- [ ] get user information
+- [ ] push template message
+- [ ] wechat payment
+- [ ] create qrcode
 
-### 依赖的 egg 版本
 
-egg-mp 版本 | egg 1.x
---- | ---
-1.x | 😁
-0.x | ❌
+## Install
 
-### 依赖的插件
-<!--
+```bash
+$ npm i egg-mp --save
+```
 
-如果有依赖其它插件，请在这里特别说明。如
-
-- security
-- multipart
-
--->
-
-## 开启插件
+## Usage
 
 ```js
-// config/plugin.js
+// {app_root}/config/plugin.js
 exports.mp = {
   enable: true,
   package: 'egg-mp',
 };
 ```
 
-## 使用场景
+## Configuration
 
-- Why and What: 描述为什么会有这个插件，它主要在完成一件什么事情。
-尽可能描述详细。
-- How: 描述这个插件是怎样使用的，具体的示例代码，甚至提供一个完整的示例，并给出链接。
+```js
+// {app_root}/config/config.default.js
+exports.mp = {
+  appId: 'your appid', 
+  appSecret: 'your appscret'
+};
+```
 
-## 详细配置
+see [config/config.default.js](config/config.default.js) for more detail.
 
-请到 [config/config.default.js](config/config.default.js) 查看详细配置项说明。
+## Example
 
-## 单元测试
+```javascript
+async login() {
+    const { ctx, service } = this;
+    const query = ctx.request.query;
+    const rule = { code: { type: "string" } };
+    ctx.validate(rule, query); // code params is required
+    let res = await service.wechat.login(query.code);
+    // {
+    //   session_key: "Sop9yRVgqnCFjsqANnNE2Q==",
+    //   openid: "oo17M4gnwK3iQd6dxcA5mLDkoHA8"
+    // };
+}
+```
 
-<!-- 描述如何在单元测试中使用此插件，例如 schedule 如何触发。无则省略。-->
+## Questions & Suggestions
 
-## 提问交流
-
-请到 [egg issues](https://github.com/eggjs/egg/issues) 异步交流。
+Please open an issue [here](https://github.com/unclexiao/egg-mp/issues).
 
 ## License
 
