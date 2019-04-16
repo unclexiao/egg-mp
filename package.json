@@ -1,6 +1,6 @@
 {
   "name": "egg-mp",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "egg plugin for wechat mini program",
   "eggPlugin": {
     "name": "mp"
@@ -14,12 +14,14 @@
     "mini-program",
     "miniProgram"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "crypto": "^1.0.1"
+  },
   "devDependencies": {
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "egg": "^2.16.0",
-    "egg-bin": "^4.11.0",
+    "egg-bin": "^4.12.3",
     "egg-ci": "^1.11.0",
     "egg-mock": "^3.21.0",
     "eslint": "^5.13.0",

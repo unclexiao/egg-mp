@@ -28,7 +28,7 @@ basic backend service for mp(wechat mini program)
 
 ## Features
 - [X] wechat login
-- [ ] get user information
+- [x] get user information
 - [ ] push template message
 - [ ] wechat payment
 - [ ] create qrcode
