@@ -13,7 +13,7 @@ class WechatService extends Service {
      * @link https://developers.weixin.qq.com/miniprogram/dev/api/code2Session.html?search-key=jscode2session
      */
     const { appId, appSecret } = this.app.config.mp;
-    const url = `${jscode2sessionUri}?appid=${appId}&mp=${appSecret}&js_code=${code}&grant_type=authorization_code`;
+    const url = `${jscode2sessionUri}?appid=${appId}&secret=${appSecret}&js_code=${code}&grant_type=authorization_code`;
     const res = await this.ctx.curl(url, { dataType: 'json' });
     return res.data;
   }

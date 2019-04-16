@@ -47,10 +47,8 @@ exports.mp = {
 ```javascript
 async login() {
     const { ctx, service } = this;
-    const query = ctx.request.query;
-    const rule = { code: { type: "string" } };
-    ctx.validate(rule, query); // code params is required
-    let res = await service.wechat.login(query.code);
+    const { code } = ctx.request.query;
+    let res = await service.mp.login(code);
     // {
     //   session_key: "Sop9yRVgqnCFjsqANnNE2Q==",
     //   openid: "oo17M4gnwK3iQd6dxcA5mLDkoHA8"

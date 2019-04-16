@@ -1,6 +1,6 @@
 {
   "name": "egg-mp",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "egg plugin for wechat mini program",
   "eggPlugin": {
     "name": "mp"
