@@ -21,11 +21,12 @@
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "egg": "^2.16.0",
-    "egg-bin": "^4.12.3",
+    "egg-bin": "^4.13.1",
     "egg-ci": "^1.11.0",
     "egg-mock": "^3.21.0",
     "eslint": "^5.13.0",
-    "eslint-config-egg": "^7.1.0"
+    "eslint-config-egg": "^7.1.0",
+    "lodash": "^4.17.14"
   },
   "engines": {
     "node": ">=8.0.0"
