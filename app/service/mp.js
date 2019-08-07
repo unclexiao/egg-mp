@@ -5,6 +5,7 @@ const crypto = require('crypto');
 // 微信相关接口常量
 const jscode2sessionUri = 'https://api.weixin.qq.com/sns/jscode2session'; // 微信临时授权码
 const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token'; // 微信凭据
+const msgSecCheck = 'https://api.weixin.qq.com/wxa/msg_sec_check'; // 微信敏感词
 
 class WechatService extends Service {
   async login(code) {
@@ -64,6 +65,24 @@ class WechatService extends Service {
       throw new Error('Illegal Appid');
     }
     return decoded;
+  }
+
+  async checkIsSensitive(content) {
+    /**
+     * @description 检查一段文本是否含有违法违规内容。
+     * @link https://developers.weixin.qq.com/miniprogram/dev/api/msgSecCheck.html?search-key=msg_sec_check
+     */
+    const token = await this.getToken();
+    const access_token = token.access_token;
+    const res = await this.ctx.curl(`${msgSecCheck}?access_token=${access_token}`, {
+      method: 'POST',
+      contentType: 'json',
+      dataType: 'json',
+      data: {
+        content,
+      },
+    });
+    return res.data.errcode === 87014;
   }
 }
 

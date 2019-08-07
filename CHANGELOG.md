@@ -1,6 +1,6 @@
 # 改动历史
 ## 2019-04-16, Version 1.0.6 @unclexiao
- * 新增[example](example/README.md)文件夹，提供简单示例
+ * 新增[ 检测是否含有敏感词](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html)
  
 ## 2019-04-16, Version 1.0.5 @unclexiao
  * 修复[Lodash严重安全漏洞](https://www.infoq.cn/article/k7C-ZvXKOHh284ToEy9K)

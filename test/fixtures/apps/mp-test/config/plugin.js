@@ -5,5 +5,5 @@ const path = require('path');
 exports.mp = {
   enable: true,
   // package: 'egg-mp',
-  path: path.join(__dirname, '../../'),
+  path: path.join(__dirname, '../../../../'),
 };
