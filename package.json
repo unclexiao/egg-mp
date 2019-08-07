@@ -1,6 +1,6 @@
 {
   "name": "egg-mp",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "egg plugin for wechat mini program",
   "eggPlugin": {
     "name": "mp"
@@ -15,7 +15,9 @@
     "miniProgram"
   ],
   "dependencies": {
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "md5": "^2.2.1",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "autod": "^3.0.1",

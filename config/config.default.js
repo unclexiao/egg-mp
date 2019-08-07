@@ -6,6 +6,8 @@
  * @property {String} SOME_KEY - some description
  */
 exports.mp = {
-  appId: '',
-  appSecret: '',
+  appId: '', // 公众平台应用编号
+  appSecret: '', // 公众平台应用密钥
+  mchId: '', // 商户平台商家编号
+  apiKey: '', // 商户支付密钥
 };

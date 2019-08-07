@@ -8,6 +8,7 @@ const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token'; // 微信凭据
 const msgSecCheck = 'https://api.weixin.qq.com/wxa/msg_sec_check'; // 微信敏感词
 const sendMsgUri =
   'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send'; // 微信服务通知
+const payUri = 'https://api.mch.weixin.qq.com/pay/unifiedorder'; // 微信统一下单
 
 class WechatService extends Service {
   async login(code) {
@@ -111,6 +112,75 @@ class WechatService extends Service {
     return res.data;
   }
 
+  async createOrder(openid, data) {
+    /**
+     * @description 统一下单
+     * @link https://api.mch.weixin.qq.com/pay/unifiedorder
+     */
+    const {
+      ctx,
+      helper,
+    } = this;
+    const signedParams = this.firstSignOrder(openid, data);
+    const successXml = await ctx.curl(payUri, {
+      method: 'POST',
+      data: helper.json2xml(signedParams),
+    });
+    const json = helper.xml2json(successXml.data);
+    if (json.return_code === 'FAIL') {
+      return {
+        code: -1,
+        msg: json.return_msg,
+      };
+    }
+    return this.secondSignOrder(json);
+  }
+
+  // 第一次签名
+  firstSignOrder(openid, data) {
+    const {
+      app,
+      ctx,
+      service,
+    } = this;
+    const {
+      appId,
+      mchId,
+    } = app.config.mp;
+    const params = {
+      openid,
+      appid: appId,
+      mch_id: mchId,
+      nonce_str: service.sign.createNonceStr(),
+      out_trade_no: data.tradeNo || new Date().getTime(), // 内部订单号
+      total_fee: data.totalFee || 1, // 单位为分的标价金额
+      spbill_create_ip: ctx.ip, // 支付提交用户端ip
+      notify_url: data.notifyUrl || '', // 异步接收微信支付结果通知
+      trade_type: 'JSAPI',
+    };
+    params.sign = service.sign.getPaySign(params); // 首次签名，用于验证支付通知
+    return params;
+  }
+
+  // 第二次签名
+  secondSignOrder(json) {
+    const {
+      app,
+      service,
+    } = this;
+    const {
+      appId,
+    } = app.config.mp;
+    const res = {
+      appId,
+      timeStamp: service.sign.createTimestamp(),
+      nonceStr: json.nonce_str,
+      package: `prepay_id=${json.prepay_id}`,
+      signType: 'MD5',
+    }; // 不能随意增减，必须是这些字段
+    res.paySign = service.sign.getPaySign(res); // 第二次签名，用于提交到微信
+    return res;
+  }
 }
 
 module.exports = WechatService;
