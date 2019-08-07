@@ -34,8 +34,10 @@ exports.mp = {
 ```js
 // {app_root}/config/config.default.js
 exports.mp = {
-  appId: 'your appid', 
-  appSecret: 'your appscret'
+  appId: '', // 公众平台应用编号
+  appSecret: '', // 公众平台应用密钥
+  mchId: '', // 商户平台商家编号
+  apiKey: '', // 商户支付密钥
 };
 ```
 
