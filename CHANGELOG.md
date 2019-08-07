@@ -1,8 +1,11 @@
 # 改动历史
-## 2019-04-16, Version 1.0.6 @unclexiao
- * 新增[ 检测是否含有敏感词](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html)
+## 2019-08-17, Version 1.0.7 @unclexiao
+ * 新增 [推送模板消息](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html)
  
-## 2019-04-16, Version 1.0.5 @unclexiao
+## 2019-08-17, Version 1.0.6 @unclexiao
+ * 新增[检测是否含有敏感词](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html)
+ 
+## 2019-07-15, Version 1.0.5 @unclexiao
  * 修复[Lodash严重安全漏洞](https://www.infoq.cn/article/k7C-ZvXKOHh284ToEy9K)
 
 ## 2019-04-16, Version 1.0.3 @unclexiao

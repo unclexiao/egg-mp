@@ -6,6 +6,8 @@ const crypto = require('crypto');
 const jscode2sessionUri = 'https://api.weixin.qq.com/sns/jscode2session'; // 微信临时授权码
 const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token'; // 微信凭据
 const msgSecCheck = 'https://api.weixin.qq.com/wxa/msg_sec_check'; // 微信敏感词
+const sendMsgUri =
+  'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send'; // 微信服务通知
 
 class WechatService extends Service {
   async login(code) {
@@ -84,6 +86,31 @@ class WechatService extends Service {
     });
     return res.data.errcode === 87014;
   }
+
+  async pushMessage(params) {
+    /**
+     * @description 模板消息
+     * @link https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
+     */
+    const body = {
+      touser: params.openid,
+      template_id: params.templateid,
+      page: params.page,
+      form_id: params.formid,
+      data: params.formid,
+      emphasis_keyword: params.emphasis_keyword,
+    };
+    const token = await this.getToken();
+    const access_token = token.access_token;
+    const res = await this.ctx.curl(`${sendMsgUri}?access_token=${access_token}`, {
+      method: 'POST',
+      contentType: 'json',
+      dataType: 'json',
+      data: body,
+    });
+    return res.data;
+  }
+
 }
 
 module.exports = WechatService;
