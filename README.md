@@ -1,6 +1,7 @@
 # egg-mp
 
-## 介绍
+[![npm version](https://badge.fury.io/js/egg-mp.svg)](https://badge.fury.io/js/egg-mp)
+
 [微信公众平台](https://mp.weixin.qq.com/)常规的后端服务，献给了不起的[EggJS](https://eggjs.org/zh-cn/)
 
 ## 特性

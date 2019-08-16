@@ -1,5 +1,5 @@
 # 改动历史
-## 2019-08-16, Version 1.0.10 @unclexiao
+## 2019-08-16, Version 1.0.11 @unclexiao
  * 新增对[微信服务号](https://www.npmjs.com/package/md5)支持，如授权登录、查看公开信息
  * 删除[md5](https://www.npmjs.com/package/md5)模块，采用内置的[crypto](https://nodejs.org/docs/latest-v10.x/api/crypto.html)
 
