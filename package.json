@@ -1,18 +1,19 @@
 {
   "name": "egg-mp",
-  "version": "1.0.9",
-  "description": "egg plugin for wechat mini program",
+  "version": "1.0.10",
+  "description": "egg plugin for wechat",
   "eggPlugin": {
     "name": "mp"
   },
   "keywords": [
     "egg",
-    "eggPlugin",
     "egg-plugin",
+    "egg-wx",
+    "egg-weixin",
+    "egg-wechat",
+    "egg-mp",
     "wechat",
-    "wxapp",
-    "mini-program",
-    "miniProgram"
+    "wxapp"
   ],
   "dependencies": {
     "md5": "^2.2.1",

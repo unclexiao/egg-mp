@@ -10,7 +10,7 @@ const sendMsgUri =
   'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send'; // 微信服务通知
 const payUri = 'https://api.mch.weixin.qq.com/pay/unifiedorder'; // 微信统一下单
 
-class WechatService extends Service {
+class MPService extends Service {
   async login(code) {
     /**
      * @description 登录凭证校验
@@ -183,4 +183,4 @@ class WechatService extends Service {
   }
 }
 
-module.exports = WechatService;
+module.exports = MPService;
