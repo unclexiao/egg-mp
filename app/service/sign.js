@@ -1,5 +1,5 @@
 'use strict';
-const md5 = require('md5');
+const crypto = require('crypto');
 
 const Service = require('egg').Service;
 
@@ -20,7 +20,7 @@ class SignService extends Service {
   raw(args) {
     const keys = Object.keys(args).sort(); // 参数名ASCII码从小到大排序（字典序）；
     let string = '';
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0;i < keys.length;i++) {
       const k = keys[i];
       if (k === 'sign' || !args[k]) {
         continue; // 如果参数的值为空不参与签名
@@ -33,6 +33,11 @@ class SignService extends Service {
     }
     string = string.substr(1);
     return string;
+  }
+
+  // 生成加密MD5字符串
+  md5(str) {
+    return crypto.createHash('md5').update(str).digest('hex');
   }
 
   // 生成支付签名

@@ -1,5 +1,8 @@
 # 改动历史
-## 2019-08-17, Version 1.0.6 @unclexiao
+## 2019-08-16, Version 1.0.9 @unclexiao
+ * 删除[md5](https://www.npmjs.com/package/md5)模块，采用内置的[crypto](https://nodejs.org/docs/latest-v10.x/api/crypto.html)
+
+## 2019-08-07, Version 1.0.8 @unclexiao
  * 新增[检测是否含有敏感词](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html)
   * 新增 [推送模板消息](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html)
  * 新增 [微信小程序支付](https://api.mch.weixin.qq.com/pay/unifiedorder)
