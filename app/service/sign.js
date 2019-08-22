@@ -20,7 +20,7 @@ class SignService extends Service {
   raw(args) {
     const keys = Object.keys(args).sort(); // 参数名ASCII码从小到大排序（字典序）；
     let string = '';
-    for (let i = 0;i < keys.length;i++) {
+    for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
       if (k === 'sign' || !args[k]) {
         continue; // 如果参数的值为空不参与签名
@@ -46,7 +46,7 @@ class SignService extends Service {
       apiKey,
     } = this.app.config.mp;
     const rawStr = this.raw(args);
-    const md5Str = md5(rawStr + '&key=' + apiKey);
+    const md5Str = this.md5(rawStr + '&key=' + apiKey);
     return md5Str.toUpperCase();
   }
 }

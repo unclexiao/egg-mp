@@ -2,83 +2,144 @@
 
 const Service = require('egg').Service;
 
-const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token';
-const templateUri = 'https://api.weixin.qq.com/cgi-bin/message/template/send';
-const usersUri = 'https://api.weixin.qq.com/cgi-bin/user/get';
-const userInfoBatch = 'https://api.weixin.qq.com/cgi-bin/user/info/batchget';
-const authUri = 'https://api.weixin.qq.com/sns/oauth2/access_token';
+const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token'; // 换取统一令牌
+const templateUri = 'https://api.weixin.qq.com/cgi-bin/message/template/send'; // 推送模板消息
+const usersUri = 'https://api.weixin.qq.com/cgi-bin/user/get'; // 获取用户信息
+const userInfoBatch = 'https://api.weixin.qq.com/cgi-bin/user/info/batchget'; // 批量获取用户信息
+const authUri = 'https://api.weixin.qq.com/sns/oauth2/access_token'; // 微信网页授权
+const payUri = 'https://api.mch.weixin.qq.com/pay/unifiedorder'; // 微信统一下单
 
 const jsonType = {
-    dataType: 'json',
+  dataType: 'json',
 };
 
 class WCSService extends Service {
-    /**
-    * @description 获取access_token
-    * @link https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183
-    */
-    async getToken() {
-        const {
-            appId,
-            appSecret,
-        } = this.app.config.mp;
-        const url = `${tokenUri}?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
-        const res = await this.ctx.curl(url, jsonType);
-        return res.data;
-    }
+  /**
+  * 获取Token
+  * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183
+  */
+  async getToken() {
+    const {
+      appId,
+      appSecret,
+    } = this.app.config.mp;
+    const url = `${tokenUri}?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
+    const res = await this.ctx.curl(url, jsonType);
+    return res.data;
+  }
 
-    /**
-    * @description 微信网页授权
-    * @link https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
-    */
-    async auth(code) {
-        const {
-            appId,
-            appSecret,
-        } = this.app.config.mp;
-        const url = `${authUri}?grant_type=authorization_code&appid=${appId}&secret=${appSecret}&code=${code}`;
-        const res = await this.ctx.curl(url, jsonType);
-        return res.data;
-    }
+  /**
+  * 微信网页授权
+  * @param {String} code - 临时授权码
+  * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
+  */
+  async auth(code) {
+    const {
+      appId,
+      appSecret,
+    } = this.app.config.mp;
+    const url = `${authUri}?grant_type=authorization_code&appid=${appId}&secret=${appSecret}&code=${code}`;
+    const res = await this.ctx.curl(url, jsonType);
+    return res.data;
+  }
 
-    /**
-    * @description 发送模板消息
-    * @link https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1433751277
-    */
-    async sendTemplateMsg(accessToken, data) {
-        const url = `${templateUri}?access_token=${accessToken}`;
-        const res = await this.ctx.curl(url, {
-            method: 'POST',
-            dataType: 'json',
-            data: JSON.stringify(data),
-        });
-        return res.data;
-    }
+  /**
+  * 发送模板消息
+  * @param {String} accessToken - accessToken
+  * @param {Object} data - 模板消息数据
+  * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1433751277
+  */
+  async sendTemplateMsg(accessToken, data) {
+    const url = `${templateUri}?access_token=${accessToken}`;
+    const res = await this.ctx.curl(url, {
+      method: 'POST',
+      dataType: 'json',
+      data: JSON.stringify(data),
+    });
+    return res.data;
+  }
 
-    /**
-    * @description 获取用户列表
-    * @link https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140840
-    */
-    async getAllUsers(accessToken) {
-        const url = `${usersUri}?access_token=${accessToken}`;
-        const res = await this.ctx.curl(url, jsonType);
-        const openids = res.data.data.openid;
-        return openids;
-    }
+  /**
+  * 获取用户列表
+  * @param {String} accessToken - accessToken
+  * @see  https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140840
+  */
+  async getUserInfo(accessToken) {
+    const url = `${usersUri}?access_token=${accessToken}`;
+    const res = await this.ctx.curl(url, jsonType);
+    const openids = res.data.data.openid;
+    return openids;
+  }
 
-    /**
-    * @description 获取用户信息
-    * @link https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140839
-    */
-    async getUserInfo(accessToken, data) {
-        const url = `${userInfoBatch}?access_token=${accessToken}`;
-        const res = await this.ctx.curl(url, {
-            method: 'POST',
-            dataType: 'json',
-            data: JSON.stringify(data),
-        });
-        return res.data;
+  /**
+  * 获取用户信息
+  * @param {String} accessToken - accessToken
+  * @param {Object} data - 用户数据
+  * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140839
+  */
+  async getAllUsers(accessToken, data) {
+    const url = `${userInfoBatch}?access_token=${accessToken}`;
+    const res = await this.ctx.curl(url, {
+      method: 'POST',
+      dataType: 'json',
+      data: JSON.stringify(data),
+    });
+    return res.data;
+  }
+
+  /**
+  * 统一下单
+  * @param {String} openid 开放平台编号
+  * @param {Object} data 订单数据
+  * @see https://api.mch.weixin.qq.com/pay/unifiedorder
+  */
+  async createOrder(openid, data) {
+
+    const {
+      ctx,
+    } = this;
+    const signedParams = this.createSign(openid, data);
+    const successXml = await ctx.curl(payUri, {
+      method: 'POST',
+      data: ctx.helper.json2xml(signedParams),
+    });
+    const json = ctx.helper.xml2json(successXml.data);
+    if (json.return_code === 'FAIL') {
+      return {
+        code: -1,
+        msg: json.return_msg,
+      };
     }
+    return json;
+  }
+
+  // 生成支付签名
+  createSign(openid, data) {
+    const {
+      app,
+      ctx,
+      service,
+    } = this;
+    const {
+      appId,
+      mchId,
+      notifyUrl
+    } = app.config.mp;
+    const params = {
+      openid: openid || '',
+      appid: appId,
+      mch_id: mchId,
+      nonce_str: service.sign.createNonceStr(),
+      body: data.body || '我是测试商品',
+      out_trade_no: data.tradeNo || new Date().getTime(), // 内部订单号
+      total_fee: data.totalFee || 1, // 单位为分的标价金额
+      spbill_create_ip: ctx.ip || '127.0.0.1', // 支付提交用户端ip
+      notify_url: notifyUrl, // 异步接收微信支付结果通知
+      trade_type: 'JSAPI',
+    };
+    params.sign = service.sign.getPaySign(params); // 订单签名，用于验证支付通知
+    return params;
+  }
 }
 
 module.exports = WCSService;
