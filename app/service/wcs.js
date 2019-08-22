@@ -3,6 +3,7 @@
 const Service = require('egg').Service;
 
 const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token'; // 换取统一令牌
+const ticketUri = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket'; // Web端临时票据
 const templateUri = 'https://api.weixin.qq.com/cgi-bin/message/template/send'; // 推送模板消息
 const usersUri = 'https://api.weixin.qq.com/cgi-bin/user/get'; // 获取用户信息
 const userInfoBatch = 'https://api.weixin.qq.com/cgi-bin/user/info/batchget'; // 批量获取用户信息
@@ -26,6 +27,30 @@ class WCSService extends Service {
     const url = `${tokenUri}?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
     const res = await this.ctx.curl(url, jsonType);
     return res.data;
+  }
+
+  /**
+  * 获取Ticket
+  * @param {String} token - Token
+  * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+  */
+  async getTicket(token) {
+    const url = `${ticketUri}?access_token=${token}&type=jsapi`;
+    const res = await this.ctx.curl(url, jsonType);
+    return res.data;
+  }
+
+  /**
+  * 获取权限验证配置
+  * @param {String} url - 调用JSAPI的网址
+  * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+  */
+  async getConfig(url) {
+    const tokenRes = await this.getToken();
+    const ticketRes = await this.getTicket(tokenRes.access_token);
+    const params = this.createConfigSign(ticketRes.ticket, url);
+    params.appId = this.app.config.mp.appId;
+    return params;
   }
 
   /**
@@ -64,7 +89,7 @@ class WCSService extends Service {
   * @param {String} accessToken - accessToken
   * @see  https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140840
   */
-  async getUserInfo(accessToken) {
+  async getUserList(accessToken) {
     const url = `${usersUri}?access_token=${accessToken}`;
     const res = await this.ctx.curl(url, jsonType);
     const openids = res.data.data.openid;
@@ -72,17 +97,17 @@ class WCSService extends Service {
   }
 
   /**
-  * 获取用户信息
+  * 批量获取用户信息
   * @param {String} accessToken - accessToken
-  * @param {Object} data - 用户数据
+  * @param {Array} openids - 用户数据
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140839
   */
-  async getAllUsers(accessToken, data) {
+  async getBatchUserInfo(accessToken, openids) {
     const url = `${userInfoBatch}?access_token=${accessToken}`;
     const res = await this.ctx.curl(url, {
       method: 'POST',
       dataType: 'json',
-      data: JSON.stringify(data),
+      data: JSON.stringify(openids),
     });
     return res.data;
   }
@@ -90,15 +115,14 @@ class WCSService extends Service {
   /**
   * 统一下单
   * @param {String} openid 开放平台编号
-  * @param {Object} data 订单数据
+  * @param {Object} order 订单数据
   * @see https://api.mch.weixin.qq.com/pay/unifiedorder
   */
-  async createOrder(openid, data) {
-
+  async createOrder(openid, order) {
     const {
       ctx,
     } = this;
-    const signedParams = this.createSign(openid, data);
+    const signedParams = this.createPaySign(openid, order);
     const successXml = await ctx.curl(payUri, {
       method: 'POST',
       data: ctx.helper.json2xml(signedParams),
@@ -113,8 +137,23 @@ class WCSService extends Service {
     return json;
   }
 
+  createConfigSign(ticket, url) {
+    const {
+      service,
+    } = this;
+    const timestamp = parseInt(new Date().getTime() / 1000);
+    const params = {
+      jsapi_ticket: ticket,
+      url,
+      timestamp,
+      noncestr: service.sign.createNonceStr(),
+    };
+    params.signature = service.sign.getConfigSign(params); // 配置签名，用于Web端调用接口
+    return params;
+  }
+
   // 生成支付签名
-  createSign(openid, data) {
+  createPaySign(openid, order) {
     const {
       app,
       ctx,
@@ -123,16 +162,16 @@ class WCSService extends Service {
     const {
       appId,
       mchId,
-      notifyUrl
+      notifyUrl,
     } = app.config.mp;
     const params = {
       openid: openid || '',
       appid: appId,
       mch_id: mchId,
       nonce_str: service.sign.createNonceStr(),
-      body: data.body || '我是测试商品',
-      out_trade_no: data.tradeNo || new Date().getTime(), // 内部订单号
-      total_fee: data.totalFee || 1, // 单位为分的标价金额
+      body: order.body || '我是测试商品',
+      out_trade_no: order.tradeNo || new Date().getTime(), // 内部订单号
+      total_fee: order.totalFee || 1, // 单位为分的标价金额
       spbill_create_ip: ctx.ip || '127.0.0.1', // 支付提交用户端ip
       notify_url: notifyUrl, // 异步接收微信支付结果通知
       trade_type: 'JSAPI',

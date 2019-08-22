@@ -1,6 +1,7 @@
 # 改动历史
-## 2019-08-22, Version 1.0.15 @unclexiao
+## 2019-08-22, Version 1.0.16 @unclexiao
  * 支持微信服务号支付：[JSPAI](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
+  * 支持Web端调用接口：[wx.config](https://mp.weixin.qq.com/wiki?action=doc&id=mp1421141115&t=0.7725970195588259#62)
 
 ## 2019-08-19, Version 1.0.13 @unclexiao
  * 新增类型支持与[智能提示](https://zhuanlan.zhihu.com/p/56780733)

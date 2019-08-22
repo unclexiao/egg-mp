@@ -35,6 +35,18 @@ class SignService extends Service {
     return string;
   }
 
+  // 生成加密SHA1字符串
+  sha1(str) {
+    return crypto.createHash('sha1').update(str).digest('hex');
+  }
+
+  // 生成配置签名
+  getConfigSign(args) {
+    const rawStr = this.raw(args);
+    const shaStr = this.sha1(rawStr);
+    return shaStr.toLocaleLowerCase();
+  }
+
   // 生成加密MD5字符串
   md5(str) {
     return crypto.createHash('md5').update(str).digest('hex');
