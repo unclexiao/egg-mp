@@ -1,10 +1,13 @@
 # 改动历史
+## 2019-08-23, Version 1.0.17 @unclexiao
+ * 完善[JSDoc](https://devdocs.io/jsdoc/)，提升源码可读性
+
 ## 2019-08-22, Version 1.0.16 @unclexiao
  * 支持微信服务号支付：[JSPAI](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1)
   * 支持Web端调用接口：[wx.config](https://mp.weixin.qq.com/wiki?action=doc&id=mp1421141115&t=0.7725970195588259#62)
 
 ## 2019-08-19, Version 1.0.13 @unclexiao
- * 新增类型支持与[智能提示](https://zhuanlan.zhihu.com/p/56780733)
+ * 新增[类型支持](https://www.tslang.cn/docs/handbook/declaration-files/publishing.html)与[智能提示](https://zhuanlan.zhihu.com/p/56780733)
 
 ## 2019-08-16, Version 1.0.11 @unclexiao
  * 新增对[微信服务号](https://www.npmjs.com/package/md5)支持，如授权登录、查看公开信息

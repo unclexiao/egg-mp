@@ -17,6 +17,7 @@ const jsonType = {
 class WCSService extends Service {
   /**
   * 获取Token
+  * @return {String} 令牌
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183
   */
   async getToken() {
@@ -31,7 +32,8 @@ class WCSService extends Service {
 
   /**
   * 获取Ticket
-  * @param {String} token - Token
+  * @param {String} token 令牌
+  * @return {Object} 票据信息
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
   */
   async getTicket(token) {
@@ -42,20 +44,22 @@ class WCSService extends Service {
 
   /**
   * 获取权限验证配置
-  * @param {String} url - 调用JSAPI的网址
+  * @param {String} url 调用JSAPI的网址
+  * @return {Object} JSSDK初始化配置
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
   */
   async getConfig(url) {
     const tokenRes = await this.getToken();
     const ticketRes = await this.getTicket(tokenRes.access_token);
-    const params = this.createConfigSign(ticketRes.ticket, url);
+    const params = this._createConfigSign(ticketRes.ticket, url);
     params.appId = this.app.config.mp.appId;
     return params;
   }
 
   /**
   * 微信网页授权
-  * @param {String} code - 临时授权码
+  * @param {String} code 临时授权码
+  * @return {Object} 微信返回的授权信息
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
   */
   async auth(code) {
@@ -70,8 +74,9 @@ class WCSService extends Service {
 
   /**
   * 发送模板消息
-  * @param {String} accessToken - accessToken
-  * @param {Object} data - 模板消息数据
+  * @param {String} accessToken accessToken
+  * @param {Object} data 模板消息数据
+  * @return {Object} 微信返回的推送结果
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1433751277
   */
   async sendTemplateMsg(accessToken, data) {
@@ -86,7 +91,8 @@ class WCSService extends Service {
 
   /**
   * 获取用户列表
-  * @param {String} accessToken - accessToken
+  * @param {String} accessToken accessToken
+  * @return {Object} 用户列表
   * @see  https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140840
   */
   async getUserList(accessToken) {
@@ -98,8 +104,9 @@ class WCSService extends Service {
 
   /**
   * 批量获取用户信息
-  * @param {String} accessToken - accessToken
-  * @param {Array} openids - 用户数据
+  * @param {String} accessToken accessToken
+  * @param {Array} openids 用户数据
+  * @return {Object} 批量用户信息
   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140839
   */
   async getBatchUserInfo(accessToken, openids) {
@@ -116,13 +123,14 @@ class WCSService extends Service {
   * 统一下单
   * @param {String} openid 开放平台编号
   * @param {Object} order 订单数据
+  * @return {Object} 用于JSSDK调用支付接口
   * @see https://api.mch.weixin.qq.com/pay/unifiedorder
   */
   async createOrder(openid, order) {
     const {
       ctx,
     } = this;
-    const signedParams = this.createPaySign(openid, order);
+    const signedParams = this._createPaySign(openid, order);
     const successXml = await ctx.curl(payUri, {
       method: 'POST',
       data: ctx.helper.json2xml(signedParams),
@@ -137,7 +145,8 @@ class WCSService extends Service {
     return json;
   }
 
-  createConfigSign(ticket, url) {
+  // 生成配置签名
+  _createConfigSign(ticket, url) {
     const {
       service,
     } = this;
@@ -153,7 +162,7 @@ class WCSService extends Service {
   }
 
   // 生成支付签名
-  createPaySign(openid, order) {
+  _createPaySign(openid, order) {
     const {
       app,
       ctx,

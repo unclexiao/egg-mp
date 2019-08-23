@@ -1,14 +1,18 @@
 'use strict';
 
 /**
- * egg-mp default config
- * @member Config#mp
- * @property {String} SOME_KEY - some description
+ * 微信公众平台的相关配置
+ * @member Config Egg配置
+ * @property {String}  appId - 应用号
+ * @property {number}  appSecret  - 应用密钥
+ * @property {number}  mchId  - 商户平台商家编号
+ * @property {number}  apiKey  - 商户支付接口密钥
+ * @property {number}  notifyUrl  - 支付结果回调地址
  */
 exports.mp = {
-  appId: '', // 公众平台应用编号
-  appSecret: '', // 公众平台应用密钥
-  mchId: '', // 商户平台商家编号
-  apiKey: '', // 商户支付密钥
-  notifyUrl: '' // 支付结果回调地址
+  appId: '',
+  appSecret: '',
+  mchId: '',
+  apiKey: '',
+  notifyUrl: '',
 };

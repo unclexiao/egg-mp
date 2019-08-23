@@ -11,11 +11,14 @@ const sendMsgUri =
 const payUri = 'https://api.mch.weixin.qq.com/pay/unifiedorder'; // 微信统一下单
 
 class MPService extends Service {
+
+  /**
+  * 登录凭证校验
+  * @param {String} code 临时授权码
+  * @return {Object} 微信返回的数据
+  * @see https://developers.weixin.qq.com/miniprogram/dev/api/code2Session.html?search-key=jscode2session
+  */
   async login(code) {
-    /**
-     * @description 登录凭证校验
-     * @link https://developers.weixin.qq.com/miniprogram/dev/api/code2Session.html?search-key=jscode2session
-     */
     const {
       appId,
       appSecret,
@@ -27,11 +30,12 @@ class MPService extends Service {
     return res.data;
   }
 
+  /**
+  * 获取Token
+  * @return {Object} 微信返回的数据
+  * @see https://developers.weixin.qq.com/miniprogram/dev/api/getAccessToken.html
+  */
   async getToken() {
-    /**
-     * @description 获取小程序全局唯一后台接口调用凭据
-     * @link https://developers.weixin.qq.com/miniprogram/dev/api/getAccessToken.html
-     */
     const {
       appId,
       appSecret,
@@ -43,11 +47,15 @@ class MPService extends Service {
     return res.data;
   }
 
+  /**
+  * 加密数据解密算法
+  * @param {String} sessionKey sessionKey
+  * @param {String} encryptedData encryptedData
+  * @param {String} iv iv
+  * @return {Object} 微信返回的数据
+  * @see https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html
+  */
   async decryptData(sessionKey, encryptedData, iv) {
-    /**
-     * @description 加密数据解密算法
-     * @link https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html
-     */
     const {
       appId,
     } = this.app.config.mp;
@@ -70,11 +78,13 @@ class MPService extends Service {
     return decoded;
   }
 
+  /**
+  * 是否含有敏感内容
+  * @param {String} content 文本内容
+  * @return {Boolean} 是否敏感内容
+  * @see https://developers.weixin.qq.com/miniprogram/dev/api/msgSecCheck.html?search-key=msg_sec_check
+  */
   async checkIsSensitive(content) {
-    /**
-     * @description 检查一段文本是否含有违法违规内容。
-     * @link https://developers.weixin.qq.com/miniprogram/dev/api/msgSecCheck.html?search-key=msg_sec_check
-     */
     const token = await this.getToken();
     const access_token = token.access_token;
     const res = await this.ctx.curl(`${msgSecCheck}?access_token=${access_token}`, {
@@ -88,11 +98,13 @@ class MPService extends Service {
     return res.data.errcode === 87014;
   }
 
+  /**
+  * 推送模板消息
+  * @param {Object} params 推送消息
+  * @return {Boolean} 微信返回的数据
+  * @see https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
+  */
   async pushMessage(params) {
-    /**
-     * @description 模板消息
-     * @link https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
-     */
     const body = {
       touser: params.openid,
       template_id: params.templateid,
@@ -112,16 +124,19 @@ class MPService extends Service {
     return res.data;
   }
 
+  /**
+  * 统一下单
+  * @param {String} openid 目标用户
+  * @param {Object} data 推送消息
+  * @return {Object} 用于小程序发起支付
+  * @see https://api.mch.weixin.qq.com/pay/unifiedorder
+  */
   async createOrder(openid, data) {
-    /**
-     * @description 统一下单
-     * @link https://api.mch.weixin.qq.com/pay/unifiedorder
-     */
     const {
       ctx,
       helper,
     } = this;
-    const signedParams = this.firstSignOrder(openid, data);
+    const signedParams = this._firstSignOrder(openid, data);
     const successXml = await ctx.curl(payUri, {
       method: 'POST',
       data: helper.json2xml(signedParams),
@@ -133,11 +148,11 @@ class MPService extends Service {
         msg: json.return_msg,
       };
     }
-    return this.secondSignOrder(json);
+    return this._secondSignOrder(json);
   }
 
   // 第一次签名
-  firstSignOrder(openid, data) {
+  _firstSignOrder(openid, data) {
     const {
       app,
       ctx,
@@ -163,7 +178,7 @@ class MPService extends Service {
   }
 
   // 第二次签名
-  secondSignOrder(json) {
+  _secondSignOrder(json) {
     const {
       app,
       service,

@@ -1,6 +1,6 @@
 {
   "name": "egg-mp",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "egg plugin for wechat",
   "types": "./index.d.ts",
   "eggPlugin": {
