@@ -130,7 +130,7 @@ class WCSService extends Service {
     const {
       ctx,
     } = this;
-    const signedParams = this._createPaySign(openid, order);
+    const signedParams = this._firstSignOrder(openid, order);
     const successXml = await ctx.curl(payUri, {
       method: 'POST',
       data: ctx.helper.json2xml(signedParams),
@@ -142,7 +142,7 @@ class WCSService extends Service {
         msg: json.return_msg,
       };
     }
-    return json;
+    return this._secondSignOrder(json);
   }
 
   // 生成配置签名
@@ -162,7 +162,7 @@ class WCSService extends Service {
   }
 
   // 生成支付签名
-  _createPaySign(openid, order) {
+  _firstSignOrder(openid, order) {
     const {
       app,
       ctx,
@@ -187,6 +187,26 @@ class WCSService extends Service {
     };
     params.sign = service.sign.getPaySign(params); // 订单签名，用于验证支付通知
     return params;
+  }
+
+  // 第二次签名
+  _secondSignOrder(json) {
+    const {
+      app,
+      service,
+    } = this;
+    const {
+      appId,
+    } = app.config.mp;
+    const res = {
+      appId,
+      timeStamp: service.sign.createTimestamp(),
+      nonceStr: json.nonce_str,
+      package: `prepay_id=${json.prepay_id}`,
+      signType: 'MD5',
+    }; // 不能随意增减，必须是这些字段
+    res.paySign = service.sign.getPaySign(res); // 第二次签名，用于提交到微信
+    return res;
   }
 }
 
