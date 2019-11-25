@@ -58,9 +58,6 @@
   "bugs": {
     "url": "https://github.com/unclexiao/egg-mp/issues"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "homepage": "https://github.com/unclexiao/egg-mp#readme",
   "author": "unclexiao <449129722@qq.com>",
   "license": "MIT"
