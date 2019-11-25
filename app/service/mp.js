@@ -134,14 +134,13 @@ class MPService extends Service {
   async createOrder(openid, data) {
     const {
       ctx,
-      helper,
     } = this;
     const signedParams = this._firstSignOrder(openid, data);
     const successXml = await ctx.curl(payUri, {
       method: 'POST',
-      data: helper.json2xml(signedParams),
+      data: ctx.helper.json2xml(signedParams),
     });
-    const json = helper.xml2json(successXml.data);
+    const json = ctx.helper.xml2json(successXml.data);
     if (json.return_code === 'FAIL') {
       return {
         code: -1,
@@ -169,6 +168,7 @@ class MPService extends Service {
       nonce_str: service.sign.createNonceStr(),
       out_trade_no: data.tradeNo || new Date().getTime(), // 内部订单号
       total_fee: data.totalFee || 1, // 单位为分的标价金额
+      body: data.body || '未知产品-测试商品', // 应用市场上的APP名字-商品概述	
       spbill_create_ip: ctx.ip, // 支付提交用户端ip
       notify_url: data.notifyUrl || '', // 异步接收微信支付结果通知
       trade_type: 'JSAPI',
