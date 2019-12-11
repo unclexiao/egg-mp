@@ -162,15 +162,16 @@ class MPService extends Service {
       mchId,
     } = app.config.mp;
     const params = {
+      ...data,
       openid,
       appid: appId,
       mch_id: mchId,
       nonce_str: service.sign.createNonceStr(),
-      out_trade_no: data.tradeNo || new Date().getTime(), // 内部订单号
-      total_fee: data.totalFee || 1, // 单位为分的标价金额
-      body: data.body || '未知产品-测试商品', // 应用市场上的APP名字-商品概述	
+      out_trade_no: data.tradeNo || data.outTradeNo || data.trade_no || data.out_trade_no || new Date().getTime(), // 内部订单号
+      total_fee: data.totalFee || data.total_fee || 1, // 单位为分的标价金额
+      body: data.body || '未知产品-测试商品', // 应用市场上的APP名字-商品概述 
       spbill_create_ip: ctx.ip, // 支付提交用户端ip
-      notify_url: data.notifyUrl || '', // 异步接收微信支付结果通知
+      notify_url: data.notifyUrl || data.notify_url || '', // 异步接收微信支付结果通知
       trade_type: 'JSAPI',
     };
     params.sign = service.sign.getPaySign(params); // 首次签名，用于验证支付通知
