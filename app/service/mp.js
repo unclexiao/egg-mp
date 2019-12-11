@@ -130,6 +130,7 @@ class MPService extends Service {
   * @param {Object} data 推送消息
   * @return {Object} 用于小程序发起支付
   * @see https://api.mch.weixin.qq.com/pay/unifiedorder
+  * @see https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1
   */
   async createOrder(openid, data) {
     const {
