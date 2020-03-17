@@ -6,18 +6,18 @@ const crypto = require('crypto');
 const jscode2sessionUri = 'https://api.weixin.qq.com/sns/jscode2session'; // 微信临时授权码
 const tokenUri = 'https://api.weixin.qq.com/cgi-bin/token'; // 微信凭据
 const msgSecCheck = 'https://api.weixin.qq.com/wxa/msg_sec_check'; // 微信敏感词
-const sendMsgUri =
-  'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send'; // 微信服务通知
+const sendMsgUri = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send'; // 微信服务通知
 const payUri = 'https://api.mch.weixin.qq.com/pay/unifiedorder'; // 微信统一下单
+const wxacodeunlimitUri = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit'; // 获取小程序码，适用于需要的码数量极多的业务场景
 
 class MPService extends Service {
 
   /**
-  * 登录凭证校验
-  * @param {String} code 临时授权码
-  * @return {Object} 微信返回的数据
-  * @see https://developers.weixin.qq.com/miniprogram/dev/api/code2Session.html?search-key=jscode2session
-  */
+   * 登录凭证校验
+   * @param {String} code 临时授权码
+   * @return {Object} 微信返回的数据
+   * @see https://developers.weixin.qq.com/miniprogram/dev/api/code2Session.html?search-key=jscode2session
+   */
   async login(code) {
     const {
       appId,
@@ -31,10 +31,10 @@ class MPService extends Service {
   }
 
   /**
-  * 获取Token
-  * @return {Object} 微信返回的数据
-  * @see https://developers.weixin.qq.com/miniprogram/dev/api/getAccessToken.html
-  */
+   * 获取Token
+   * @return {Object} 微信返回的数据
+   * @see https://developers.weixin.qq.com/miniprogram/dev/api/getAccessToken.html
+   */
   async getToken() {
     const {
       appId,
@@ -48,13 +48,40 @@ class MPService extends Service {
   }
 
   /**
-  * 加密数据解密算法
-  * @param {String} sessionKey sessionKey
-  * @param {String} encryptedData encryptedData
-  * @param {String} iv iv
-  * @return {Object} 微信返回的数据
-  * @see https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html
-  */
+   * 获取小程序码，适用于需要的码数量极多的业务场景。通过该接口生成的小程序码，永久有效，数量暂无限制。
+   * @returns {Buffer}
+   * @see https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/qr-code/wxacode.getUnlimited.html
+   */
+  async getwxacodeunlimit(data) {
+    const tda = await this.getToken();
+    if (tda.errcode !== 0) {
+      return tda;
+    }
+    const token = tda.access_token;
+    const url = `${wxacodeunlimitUri}?access_token=${token}`;
+    const resp = await this.ctx.curl(url, {
+      method: 'POST',
+      contentType: 'json',
+      data: {
+        scene: data.scene || '.',
+        page: data.page || '',
+        width: data.width || 430,
+        auto_color: data.auto_color || false,
+        line_color: data.line_color || { r: 0, g: 0, b: 0 },
+        is_hyaline: data.is_hyaline || false,
+      },
+    });
+    return resp;
+  }
+
+  /**
+   * 加密数据解密算法
+   * @param {String} sessionKey sessionKey
+   * @param {String} encryptedData encryptedData
+   * @param {String} iv iv
+   * @return {Object} 微信返回的数据
+   * @see https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html
+   */
   async decryptData(sessionKey, encryptedData, iv) {
     const {
       appId,
@@ -79,11 +106,11 @@ class MPService extends Service {
   }
 
   /**
-  * 是否含有敏感内容
-  * @param {String} content 文本内容
-  * @return {Boolean} 是否敏感内容
-  * @see https://developers.weixin.qq.com/miniprogram/dev/api/msgSecCheck.html?search-key=msg_sec_check
-  */
+   * 是否含有敏感内容
+   * @param {String} content 文本内容
+   * @return {Boolean} 是否敏感内容
+   * @see https://developers.weixin.qq.com/miniprogram/dev/api/msgSecCheck.html?search-key=msg_sec_check
+   */
   async checkIsSensitive(content) {
     const token = await this.getToken();
     const access_token = token.access_token;
@@ -99,11 +126,11 @@ class MPService extends Service {
   }
 
   /**
-  * 推送模板消息
-  * @param {Object} params 推送消息
-  * @return {Boolean} 微信返回的数据
-  * @see https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
-  */
+   * 推送模板消息
+   * @param {Object} params 推送消息
+   * @return {Boolean} 微信返回的数据
+   * @see https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
+   */
   async pushMessage(params) {
     const body = {
       touser: params.openid,
@@ -125,13 +152,13 @@ class MPService extends Service {
   }
 
   /**
-  * 统一下单
-  * @param {String} openid 目标用户
-  * @param {Object} data 推送消息
-  * @return {Object} 用于小程序发起支付
-  * @see https://api.mch.weixin.qq.com/pay/unifiedorder
-  * @see https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1
-  */
+   * 统一下单
+   * @param {String} openid 目标用户
+   * @param {Object} data 推送消息
+   * @return {Object} 用于小程序发起支付
+   * @see https://api.mch.weixin.qq.com/pay/unifiedorder
+   * @see https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1
+   */
   async createOrder(openid, data) {
     const {
       ctx,
@@ -170,7 +197,7 @@ class MPService extends Service {
       nonce_str: service.sign.createNonceStr(),
       out_trade_no: data.tradeNo || data.outTradeNo || data.trade_no || data.out_trade_no || new Date().getTime(), // 内部订单号
       total_fee: data.totalFee || data.total_fee || 1, // 单位为分的标价金额
-      body: data.body || '未知产品-测试商品', // 应用市场上的APP名字-商品概述 
+      body: data.body || '未知产品-测试商品', // 应用市场上的APP名字-商品概述
       spbill_create_ip: ctx.ip, // 支付提交用户端ip
       notify_url: data.notifyUrl || data.notify_url || '', // 异步接收微信支付结果通知
       trade_type: 'JSAPI',
