@@ -1,4 +1,8 @@
 # 改动历史
+
+## 2022-10-12, Version 1.0.22 @unclexiao
+ * 修复 Ticket 与 Token 获取失败无法感知
+
 ## 2019-08-23, Version 1.0.17 @unclexiao
  * 完善[JSDoc](https://devdocs.io/jsdoc/)，提升源码可读性
 
