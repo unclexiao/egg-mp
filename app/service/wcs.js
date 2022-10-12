@@ -27,7 +27,7 @@ class WCSService extends Service {
     } = this.app.config.mp;
     const url = `${tokenUri}?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
     const res = await this.ctx.curl(url, jsonType);
-    if (res.data.errcode != 0){
+    if (res.data.errcode){
       throw new Error(res.data.errmsg)
     }
     return res.data;
@@ -42,7 +42,7 @@ class WCSService extends Service {
   async getTicket(token) {
     const url = `${ticketUri}?access_token=${token}&type=jsapi`;
     const res = await this.ctx.curl(url, jsonType);
-    if (res.data.errcode != 0){
+    if (res.data.errcode){
       throw new Error(res.data.errmsg)
     }
     return res.data;
